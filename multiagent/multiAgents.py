@@ -252,10 +252,51 @@ def betterEvaluationFunction(currentGameState: GameState):
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
     evaluation function (question 5).
 
-    DESCRIPTION: <write something here so we know what you did>
+    DESCRIPTION: This evaluation function estimates the quality of a 
+    Pacman game state by combining the current game score, 
+    proximity to the nearest food, distance from ghosts, 
+    proximity to power capsules, and the number of remaining 
+    food pellets. Closer food and capsules increase the score, 
+    scared ghosts are encouraged to be eaten, active ghosts are 
+    avoided, and fewer remaining food pellets are rewarded. 
+    This allows Pacman to efficiently eat food, chase scared
+    ghosts, and avoid danger while progressing toward 
+    winning the game.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    pacmanPos = currentGameState.getPacmanPosition()
+    food = currentGameState.getFood()
+    ghostStates = currentGameState.getGhostStates()
+    capsules = currentGameState.getCapsules()
+    score = currentGameState.getScore()
+
+    # distance to nearest food
+    foodList = food.asList()
+    if foodList:
+        minFoodDist = min([manhattanDistance(pacmanPos, f) for f in foodList])
+        score += 1.0 / (minFoodDist + 1) 
+    
+    # ghosts
+    for ghost in ghostStates:
+        ghostPos = ghost.getPosition()
+        ghostDist = manhattanDistance(pacmanPos, ghostPos)
+        if ghost.scaredTimer > 0:
+            score += 10.0 / (ghostDist + 1)
+        else:
+            if ghostDist <= 1:
+                score -= 500  
+            else:
+                score -= 2.0 / ghostDist
+
+    # capsules
+    if capsules:
+        minCapsuleDist = min([manhattanDistance(pacmanPos, c) for c in capsules])
+        score += 5.0 / (minCapsuleDist + 1)
+
+    # remaining food penalty
+    score -= 4 * len(foodList)
+
+    return score
 
 # Abbreviation
 better = betterEvaluationFunction
