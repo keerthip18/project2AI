@@ -11,6 +11,10 @@
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
+'''
+We used AI tools to assist with understanding concepts and debugging code.
+'''
+
 
 from util import manhattanDistance
 from game import Directions
